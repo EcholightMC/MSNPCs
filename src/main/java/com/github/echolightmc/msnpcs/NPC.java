@@ -13,9 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.echolightmc.msnpcs.NPCManager.JOINING_INSTANCE_TAG;
@@ -44,7 +42,7 @@ public class NPC extends EntityCreature {
 		initCustomName();
 		if (entityType == EntityType.PLAYER) {
 			initPlayerMeta();
-			setTag(MSNAMETAGS_USERNAME_TAG, name);
+			setTag(MSNAMETAGS_USERNAME_TAG, this.name);
 		}
 	}
 

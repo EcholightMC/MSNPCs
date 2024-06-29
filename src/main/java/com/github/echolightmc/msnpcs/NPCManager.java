@@ -7,6 +7,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityDespawnEvent;
+import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerPacketEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.network.packet.client.play.ClientTeleportConfirmPacket;
@@ -27,9 +28,8 @@ public class NPCManager {
 	private final Int2ObjectOpenHashMap<NPC> npcMap = new Int2ObjectOpenHashMap<>();
 
 	public NPCManager(EventNode<Event> node) {
-		node.addListener(PlayerSpawnEvent.class, event -> {
-			event.getPlayer().setTag(JOINING_INSTANCE_TAG, true);
-		});
+		node.addListener(AsyncPlayerConfigurationEvent.class, event -> event.getPlayer().setTag(JOINING_INSTANCE_TAG, true));
+		node.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().setTag(JOINING_INSTANCE_TAG, true));
 		node.addListener(PlayerPacketEvent.class, event -> {
 			if (event.getPacket() instanceof ClientTeleportConfirmPacket) { // player is fully in instance at this point
 				Player player = event.getPlayer();
