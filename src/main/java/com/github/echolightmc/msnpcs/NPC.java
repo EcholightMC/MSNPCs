@@ -126,7 +126,7 @@ public class NPC extends EntityCreature {
 	 */
 	public void setPlayerSkin(PlayerSkin playerSkin) {
 		setTag(PLAYER_SKIN_TAG, playerSkin);
-		if (entityType != EntityType.PLAYER) return;
+		if (entityType != EntityType.PLAYER || !isActive()) return;
 		PlayerInfoRemovePacket removePacket = new PlayerInfoRemovePacket(getUuid());
 		DestroyEntitiesPacket destroyPacket = new DestroyEntitiesPacket(getEntityId());
 		for (Player p : viewers) {
