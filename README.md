@@ -35,7 +35,7 @@ repositories {
 ```gradle
 dependencies {
   ..
-  implementation("com.github.echolightmc:MSNPCs:1.1-SNAPSHOT") {
+  implementation("com.github.echolightmc:MSNPCs:1.2-SNAPSHOT") {
     exclude group: "net.minestom", module: "minestom-snapshots"
   }
 }
