@@ -6,8 +6,10 @@ import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.entity.EntityDespawnEvent;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
+import net.minestom.server.event.player.PlayerEntityInteractEvent;
 import net.minestom.server.event.player.PlayerPacketEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.network.packet.client.play.ClientTeleportConfirmPacket;
@@ -20,10 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class NPCManager {
 
-	static final Tag<Boolean> JOINING_INSTANCE_TAG = Tag.Boolean("msnpcs-joining-instance");
+	static final Tag<Boolean> JOINING_INSTANCE_TAG = Tag.Transient("msnpcs-joining-instance");
+	private static final Tag<Consumer<EntityAttackEvent>> LEFT_CLICK_TAG = Tag.Transient("left-click-consumer");
+	private static final Tag<Consumer<PlayerEntityInteractEvent>> RIGHT_CLICK_TAG = Tag.Transient("right-click-consumer");
 
 	private final Int2ObjectOpenHashMap<NPC> npcMap = new Int2ObjectOpenHashMap<>();
 
@@ -53,6 +58,16 @@ public class NPCManager {
 				}
 			}
 		});
+		node.addListener(EntityAttackEvent.class, event -> {
+			if (!(event.getEntity() instanceof Player)) return;
+			if (!(event.getTarget() instanceof NPC npc)) return;
+			if (npc.hasTag(LEFT_CLICK_TAG)) npc.getTag(LEFT_CLICK_TAG).accept(event);
+		});
+		node.addListener(PlayerEntityInteractEvent.class, event -> {
+			if (event.getHand() == Player.Hand.OFF) return; // avoid duplicate call
+			if (!(event.getTarget() instanceof NPC npc)) return;
+			if (npc.hasTag(RIGHT_CLICK_TAG)) npc.getTag(RIGHT_CLICK_TAG).accept(event);
+		});
 	}
 
 	/**
@@ -77,10 +92,16 @@ public class NPCManager {
 	 *
 	 * @param entityType the type this npc should be
 	 * @param name the name of the npc
+	 * @param leftClick the callback for when the created npc is left-clicked
+	 * @param rightClick the callback for when the created npc is right-clicked
 	 * @return a new npc entity from the given values
 	 */
-	public @NotNull NPC createNPC(@Nullable EntityType entityType, @Nullable String name) {
+	public @NotNull NPC createNPC(@Nullable EntityType entityType, @Nullable String name,
+								  @Nullable Consumer<EntityAttackEvent> leftClick,
+								  @Nullable Consumer<PlayerEntityInteractEvent> rightClick) {
 		NPC npc = new NPC(entityType, name);
+		npc.setTag(LEFT_CLICK_TAG, leftClick);
+		npc.setTag(RIGHT_CLICK_TAG, rightClick);
 		npcMap.put(npc.getNPCId(), npc);
 		return npc;
 	}
