@@ -54,7 +54,7 @@ public class NPC extends EntityCreature {
 			if (playerSkin != null)
 				properties.add(new PlayerInfoUpdatePacket.Property("textures", playerSkin.textures(), playerSkin.signature()));
 			PlayerInfoUpdatePacket.Entry playerEntry = new PlayerInfoUpdatePacket.Entry(getUuid(), getTrimmedPlayerUsername(), properties,
-					false, 0, GameMode.CREATIVE, Component.empty(), null);
+					false, 0, GameMode.CREATIVE, Component.empty(), null, 0);
 			PlayerInfoUpdatePacket updatePacket = new PlayerInfoUpdatePacket(PlayerInfoUpdatePacket.Action.ADD_PLAYER, playerEntry);
 			player.sendPacket(updatePacket);
 			if (!player.hasTag(JOINING_INSTANCE_TAG)) MinecraftServer.getSchedulerManager().scheduleNextTick(() -> player.sendPacket(playerInfoRemovePacket));

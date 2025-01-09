@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
+import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityAttackEvent;
@@ -64,7 +65,7 @@ public class NPCManager {
 			if (npc.hasTag(LEFT_CLICK_TAG)) npc.getTag(LEFT_CLICK_TAG).accept(event);
 		});
 		node.addListener(PlayerEntityInteractEvent.class, event -> {
-			if (event.getHand() == Player.Hand.OFF) return; // avoid duplicate call
+			if (event.getHand() == PlayerHand.OFF) return; // avoid duplicate call
 			if (!(event.getTarget() instanceof NPC npc)) return;
 			if (npc.hasTag(RIGHT_CLICK_TAG)) npc.getTag(RIGHT_CLICK_TAG).accept(event);
 		});
