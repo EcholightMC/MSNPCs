@@ -7,7 +7,7 @@ One of its key features is that it automatically removes npcs from chat completi
 ### Without [MSNameTags](https://github.com/EcholightMC/MSNameTags)
 ```java
 GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
-NPCManager npcManager = new NPCManager(eventHandler);
+NPCManager npcManager = new NPCManager(true, eventHandler);
 NPC npc = npcManager.createNPC(EntityType.PLAYER, "Bill", null, null); // if name is null npc id will be used instead
 npc.setInstance(instance, position);
 ```
@@ -15,7 +15,7 @@ npc.setInstance(instance, position);
 ```java
 MiniMessage miniMessage = MiniMessage.miniMessage();
 GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
-NameTagManager nameTagManager = new NameTagManager(eventHandler);
+NameTagManager nameTagManager = new NameTagManager(true, eventHandler);
 NPCManager npcManager = new NPCManager(eventHandler);
 NPC npc = npcManager.createNPC(EntityType.PLAYER, null, null, null); // if name is null npc id will be used instead
 npc.setInstance(instance, position);
