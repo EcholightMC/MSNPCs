@@ -13,6 +13,7 @@ import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerEntityInteractEvent;
 import net.minestom.server.event.player.PlayerPacketEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
+import net.minestom.server.instance.Instance;
 import net.minestom.server.network.packet.client.play.ClientTeleportConfirmPacket;
 import net.minestom.server.network.packet.server.play.PlayerInfoRemovePacket;
 import net.minestom.server.tag.Tag;
@@ -32,8 +33,10 @@ public class NPCManager {
 	private static final Tag<Consumer<PlayerEntityInteractEvent>> RIGHT_CLICK_TAG = Tag.Transient("right-click-consumer");
 
 	private final Int2ObjectOpenHashMap<NPC> npcMap = new Int2ObjectOpenHashMap<>();
+	private final boolean doCustomNames;
 
-	public NPCManager(EventNode<Event> node) {
+	public NPCManager(boolean doCustomNames, EventNode<Event> node) {
+		this.doCustomNames = doCustomNames;
 		node.addListener(AsyncPlayerConfigurationEvent.class, event -> event.getPlayer().setTag(JOINING_INSTANCE_TAG, true));
 		node.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().setTag(JOINING_INSTANCE_TAG, true));
 		node.addListener(PlayerPacketEvent.class, event -> {
@@ -43,6 +46,8 @@ public class NPCManager {
 					player.setTag(JOINING_INSTANCE_TAG, null);
 					List<UUID> uuids = new ArrayList<>();
 					for (NPC npc : npcMap.values()) {
+						Instance npcInstance = npc.getInstance();
+						if (npcInstance == null) continue;
 						if (npc.getInstance().equals(player.getInstance())) uuids.add(npc.getUuid());
 					}
 					player.sendPacket(new PlayerInfoRemovePacket(uuids)); // covers joining server/instance case
@@ -100,7 +105,7 @@ public class NPCManager {
 	public @NotNull NPC createNPC(@Nullable EntityType entityType, @Nullable String name,
 								  @Nullable Consumer<EntityAttackEvent> leftClick,
 								  @Nullable Consumer<PlayerEntityInteractEvent> rightClick) {
-		NPC npc = new NPC(entityType, name);
+		NPC npc = new NPC(entityType, name, doCustomNames);
 		npc.setTag(LEFT_CLICK_TAG, leftClick);
 		npc.setTag(RIGHT_CLICK_TAG, rightClick);
 		npcMap.put(npc.getNPCId(), npc);

@@ -30,7 +30,7 @@ public class NPC extends EntityCreature {
 
 	private final CachedPacket playerInfoRemovePacket = new CachedPacket(new PlayerInfoRemovePacket(getUuid()));
 
-	NPC(@Nullable EntityType entityType, @Nullable String name) {
+	NPC(@Nullable EntityType entityType, @Nullable String name, boolean doCustomName) {
 		super(entityType == null ? EntityType.PLAYER : entityType);
 		this.npcId = LAST_NPC_ID.incrementAndGet();
 		this.name = "[NPC] ";
@@ -39,7 +39,7 @@ public class NPC extends EntityCreature {
 		} else {
 			this.name += npcId;
 		}
-		initCustomName();
+		if (doCustomName) initCustomName();
 		if (entityType == EntityType.PLAYER) {
 			initPlayerMeta();
 			setTag(MSNAMETAGS_USERNAME_TAG, this.name);
